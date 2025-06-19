@@ -1,0 +1,27 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <label id="boardIdLabel">Board ID: loading...</label>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/monday-sdk-js/dist/main.min.js"></script>
+<script>
+    const monday = window.mondaySdk();
+
+    console.log("Page loaded and Monday SDK initialized");
+
+    monday.listen("context", res => {
+        console.log("Context received:", res);
+        const boardId = res.data.boardId;
+        document.getElementById("boardIdLabel").textContent = "Board ID: " + boardId;
+    });
+</script>
+

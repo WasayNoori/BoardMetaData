@@ -1,0 +1,16 @@
+﻿@page
+@model BoardDataView.Pages.Shared.BoardViewModel
+@{
+        <label id="boardIdLabel">Board ID: loading...</label>
+
+    <script src="https://unpkg.com/monday-sdk-js"></script>
+    <script>
+        const monday = window.mondaySdk();
+
+        monday.listen("context", res => {
+            const boardId = res.data.boardId;
+            console.log("Board ID:", boardId);
+            // Use boardId to load/store metadata
+        });
+    </script>
+}
