@@ -36,6 +36,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpdmFjeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/wasay/source/repos/WasayNoori/BoardMetaData/BoardDataView/Pages/PureDataView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHVyZURhdGFWaWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/wasay/source/repos/WasayNoori/BoardMetaData/BoardDataView/Pages/SafeView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2FmZVZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/wasay/source/repos/WasayNoori/BoardMetaData/BoardDataView/Pages/Shared/BoardView.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXEJvYXJkVmlldy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

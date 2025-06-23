@@ -28,16 +28,21 @@ namespace BoardDataView.Pages
         {
             await LoadDropdownDataAsync();
             
+            // Always show the data panel
+            DataPanel.ShowDataPanel = true;
+            
             if (boardId.HasValue)
             {
                 await LoadCourseInstanceAsync(boardId.Value);
-                DataPanel.ShowDataPanel = true;
             }
         }
 
         public async Task<IActionResult> OnPostSaveAsync()
         {
             await LoadDropdownDataAsync();
+            
+            // Always show the data panel
+            DataPanel.ShowDataPanel = true;
             
             if (!ModelState.IsValid)
             {
@@ -69,16 +74,14 @@ namespace BoardDataView.Pages
             return Page();
         }
 
-        public async Task<IActionResult> OnPostTogglePanelAsync()
-        {
-            await LoadDropdownDataAsync();
-            DataPanel.ShowDataPanel = !DataPanel.ShowDataPanel;
-            return Page();
-        }
+
 
         public async Task<IActionResult> OnPostToggleEditModeAsync()
         {
             await LoadDropdownDataAsync();
+            
+            // Always show the data panel
+            DataPanel.ShowDataPanel = true;
             
             if (!DataPanel.IsNewRecord && DataPanel.BoardId.HasValue)
             {
@@ -106,11 +109,6 @@ namespace BoardDataView.Pages
                 DataPanel.IsEditMode = false;
             }
             
-            // Keep the panel visible when toggling edit mode
-            if (!DataPanel.ShowDataPanel)
-            {
-                DataPanel.ShowDataPanel = true;
-            }
             return Page();
         }
 

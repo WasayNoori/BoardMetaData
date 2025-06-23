@@ -11,6 +11,7 @@
     <div class="row">
         <div class="col-12">
             <h2>Board Meta Data</h2>
+            <label id="boardIdLabel">Board ID: loading...</label>
             
             <!-- Error Message Display -->
             @if (!string.IsNullOrEmpty(Model.ErrorMessage))
@@ -21,179 +22,330 @@
                 </div>
             }
             
-            <!-- Toggle Button -->
-            <form method="post" asp-page-handler="TogglePanel" class="mb-3">
-                <button type="submit" class="btn btn-primary">
-                    @(Model.DataPanel.ShowDataPanel ? "Hide" : "Show") Data Panel
-                </button>
-            </form>
-
-            <!-- Data Panel -->
-            @if (Model.DataPanel.ShowDataPanel)
-            {
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">Course Instance Data</h4>
-                        <div>
-                            <!-- Always show edit/new button -->
-                            <form method="post" asp-page-handler="ToggleEditMode" class="d-inline">
-                                @if (!Model.DataPanel.IsNewRecord)
-                                {
-                                    <!-- Edit button for existing records -->
-                                    <button type="submit" class="btn btn-outline-light btn-sm" title="@(Model.DataPanel.IsEditMode ? "Cancel Edit" : "Edit")">
-                                        <i class="bi @(Model.DataPanel.IsEditMode ? "bi-x-circle" : "bi-pencil")"></i>
-                                        @(Model.DataPanel.IsEditMode ? "Cancel" : "Edit")
-                                    </button>
-                                }
-                                else
-                                {
-                                    <!-- New record button -->
-                                    <button type="submit" class="btn btn-outline-light btn-sm" title="Create New Record">
-                                        <i class="bi bi-plus-circle"></i>
-                                        New Record
-                                    </button>
-                                }
-                            </form>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        @if (Model.DataPanel.IsEditMode)
+            <!-- Success Message Display -->
+            <div id="successMessage" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
+                <strong>Success:</strong> <span id="successText"></span>
+                <button type="button" class="btn-close" onclick="hideMessage('successMessage')"></button>
+            </div>
+            
+            <!-- Error Message Display -->
+            <div id="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+                <strong>Error:</strong> <span id="errorText"></span>
+                <button type="button" class="btn-close" onclick="hideMessage('errorMessage')"></button>
+            </div>
+            
+            <!-- Data Panel - Always Visible -->
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Course Instance Data</h4>
+                    <div>
+                        <!-- Edit/Cancel button converted to regular button -->
+                        @if (!Model.DataPanel.IsNewRecord)
                         {
-                            <!-- Edit Mode Form -->
-                            <form method="post" asp-page-handler="Save">
-                                <div class="row">
-                                    <!-- Board ID (hidden or display only) -->
-                                    @if (Model.DataPanel.BoardId.HasValue)
-                                    {
-                                        <input type="hidden" asp-for="DataPanel.BoardId" />
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Board ID</label>
-                                            <input type="text" class="form-control" value="@Model.DataPanel.BoardId" readonly />
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="col-md-6 mb-3">
-                                            <label asp-for="DataPanel.BoardId" class="form-label"></label>
-                                            <input asp-for="DataPanel.BoardId" class="form-control" type="number" />
-                                            <span asp-validation-for="DataPanel.BoardId" class="text-danger"></span>
-                                        </div>
-                                    }
-
-                                    <!-- Course Dropdown -->
-                                    <div class="col-md-6 mb-3">
-                                        <label asp-for="DataPanel.SelectedCourseId" class="form-label"></label>
-                                        <select asp-for="DataPanel.SelectedCourseId" class="form-select" asp-items="Model.DataPanel.Courses" required>
-                                            <option value="">-- Select Course --</option>
-                                        </select>
-                                        <span asp-validation-for="DataPanel.SelectedCourseId" class="text-danger"></span>
-                                    </div>
-
-                                    <!-- Version Title (Manual Entry) -->
-                                    <div class="col-md-6 mb-3">
-                                        <label asp-for="DataPanel.VersionTitle" class="form-label"></label>
-                                        <input asp-for="DataPanel.VersionTitle" class="form-control" maxlength="100" />
-                                        <span asp-validation-for="DataPanel.VersionTitle" class="text-danger"></span>
-                                    </div>
-
-                                    <!-- Language Dropdown -->
-                                    <div class="col-md-6 mb-3">
-                                        <label asp-for="DataPanel.SelectedLanguageId" class="form-label"></label>
-                                        <select asp-for="DataPanel.SelectedLanguageId" class="form-select" asp-items="Model.DataPanel.Languages">
-                                            <option value="">-- Select Language --</option>
-                                        </select>
-                                        <span asp-validation-for="DataPanel.SelectedLanguageId" class="text-danger"></span>
-                                    </div>
-
-                                    <!-- Product Dropdown -->
-                                    <div class="col-md-6 mb-3">
-                                        <label asp-for="DataPanel.SelectedProductId" class="form-label"></label>
-                                        <select asp-for="DataPanel.SelectedProductId" class="form-select" asp-items="Model.DataPanel.Products">
-                                            <option value="">-- Select Product --</option>
-                                        </select>
-                                        <span asp-validation-for="DataPanel.SelectedProductId" class="text-danger"></span>
-                                    </div>
-
-                                    <!-- Instructor Dropdown -->
-                                    <div class="col-md-6 mb-3">
-                                        <label asp-for="DataPanel.SelectedInstructorId" class="form-label"></label>
-                                        <select asp-for="DataPanel.SelectedInstructorId" class="form-select" asp-items="Model.DataPanel.Instructors">
-                                            <option value="">-- Select Instructor --</option>
-                                        </select>
-                                        <span asp-validation-for="DataPanel.SelectedInstructorId" class="text-danger"></span>
-                                    </div>
-
-                                    <!-- Description (Manual Entry) -->
-                                    <div class="col-12 mb-3">
-                                        <label asp-for="DataPanel.Description" class="form-label"></label>
-                                        <textarea asp-for="DataPanel.Description" class="form-control" rows="4" placeholder="Enter description here..."></textarea>
-                                        <span asp-validation-for="DataPanel.Description" class="text-danger"></span>
-                                    </div>
-                                </div>
-
-                                <!-- Submit Buttons -->
-                                <div class="row">
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-success me-2">
-                                            <i class="bi bi-check-circle"></i> Save
-                                        </button>
-                                        <button type="reset" class="btn btn-secondary">
-                                            <i class="bi bi-arrow-clockwise"></i> Reset
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                            <!-- Edit button for existing records -->
+                            <button type="button" class="btn btn-outline-light btn-sm" onclick="toggleEditMode()" 
+                                    title="@(Model.DataPanel.IsEditMode ? "Cancel Edit" : "Edit")">
+                                <i class="bi @(Model.DataPanel.IsEditMode ? "bi-x-circle" : "bi-pencil")"></i>
+                                <span id="editButtonText">@(Model.DataPanel.IsEditMode ? "Cancel" : "Edit")</span>
+                            </button>
                         }
                         else
                         {
-                            <!-- Read-Only View Mode -->
-                            <div class="row">
-                                @if (Model.DataPanel.BoardId.HasValue)
-                                {
-                                    <div class="col-md-6 mb-3">
-                                        <strong>Board ID:</strong>
-                                        <p class="text-muted">@Model.DataPanel.BoardId</p>
-                                    </div>
-                                }
-
-                                <div class="col-md-6 mb-3">
-                                    <strong>Course:</strong>
-                                    <p class="text-muted">@(Model.DataPanel.CourseDisplayName ?? "Not selected")</p>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <strong>Version Title:</strong>
-                                    <p class="text-muted">@(Model.DataPanel.VersionTitle ?? "Not specified")</p>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <strong>Language:</strong>
-                                    <p class="text-muted">@(Model.DataPanel.LanguageDisplayName ?? "Not selected")</p>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <strong>Product:</strong>
-                                    <p class="text-muted">@(Model.DataPanel.ProductDisplayName ?? "Not selected")</p>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <strong>Instructor:</strong>
-                                    <p class="text-muted">@(Model.DataPanel.InstructorDisplayName ?? "Not assigned")</p>
-                                </div>
-
-                                <div class="col-12 mb-3">
-                                    <strong>Description:</strong>
-                                    <p class="text-muted">@(Model.DataPanel.Description ?? "No description provided")</p>
-                                </div>
-                            </div>
+                            <!-- New record button -->
+                            <button type="button" class="btn btn-outline-light btn-sm" onclick="toggleEditMode()" title="Create New Record">
+                                <i class="bi bi-plus-circle"></i>
+                                New Record
+                            </button>
                         }
                     </div>
                 </div>
-            }
+                <div class="card-body">
+                    <div id="editModeForm" style="display: @(Model.DataPanel.IsEditMode ? "block" : "none")">
+                        <!-- Edit Mode Form -->
+                        <form id="dataForm" onsubmit="saveData(event)">
+                            @Html.AntiForgeryToken()
+                            <div class="row">
+                                <!-- Board ID (hidden or display only) -->
+                                @if (Model.DataPanel.BoardId.HasValue)
+                                {
+                                    <input type="hidden" name="DataPanel.BoardId" value="@Model.DataPanel.BoardId" />
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Board ID</label>
+                                        <input type="text" class="form-control" value="@Model.DataPanel.BoardId" readonly />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Board ID</label>
+                                        <input name="DataPanel.BoardId" class="form-control" type="number" value="@Model.DataPanel.BoardId" />
+                                    </div>
+                                }
+
+                                <!-- Course Dropdown -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Course</label>
+                                    @{
+                                        var courseOptions = new System.Text.StringBuilder();
+                                        courseOptions.AppendLine("<select name=\"DataPanel.SelectedCourseId\" class=\"form-select\" required>");
+                                        courseOptions.AppendLine("<option value=\"\">-- Select Course --</option>");
+                                        foreach (var course in Model.DataPanel.Courses)
+                                        {
+                                            var selected = course.Value == Model.DataPanel.SelectedCourseId?.ToString() ? " selected" : "";
+                                            courseOptions.AppendLine($"<option value=\"{course.Value}\"{selected}>{System.Net.WebUtility.HtmlEncode(course.Text)}</option>");
+                                        }
+                                        courseOptions.AppendLine("</select>");
+                                    }
+                                    @Html.Raw(courseOptions.ToString())
+                                </div>
+
+                                <!-- Version Title -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Version Title</label>
+                                    <input name="DataPanel.VersionTitle" class="form-control" maxlength="100" value="@Model.DataPanel.VersionTitle" />
+                                </div>
+
+                                <!-- Language Dropdown -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Language</label>
+                                    @{
+                                        var languageOptions = new System.Text.StringBuilder();
+                                        languageOptions.AppendLine("<select name=\"DataPanel.SelectedLanguageId\" class=\"form-select\">");
+                                        languageOptions.AppendLine("<option value=\"\">-- Select Language --</option>");
+                                        foreach (var language in Model.DataPanel.Languages)
+                                        {
+                                            var selected = language.Value == Model.DataPanel.SelectedLanguageId?.ToString() ? " selected" : "";
+                                            languageOptions.AppendLine($"<option value=\"{language.Value}\"{selected}>{System.Net.WebUtility.HtmlEncode(language.Text)}</option>");
+                                        }
+                                        languageOptions.AppendLine("</select>");
+                                    }
+                                    @Html.Raw(languageOptions.ToString())
+                                </div>
+
+                                <!-- Product Dropdown -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Product</label>
+                                    @{
+                                        var productOptions = new System.Text.StringBuilder();
+                                        productOptions.AppendLine("<select name=\"DataPanel.SelectedProductId\" class=\"form-select\">");
+                                        productOptions.AppendLine("<option value=\"\">-- Select Product --</option>");
+                                        foreach (var product in Model.DataPanel.Products)
+                                        {
+                                            var selected = product.Value == Model.DataPanel.SelectedProductId?.ToString() ? " selected" : "";
+                                            productOptions.AppendLine($"<option value=\"{product.Value}\"{selected}>{System.Net.WebUtility.HtmlEncode(product.Text)}</option>");
+                                        }
+                                        productOptions.AppendLine("</select>");
+                                    }
+                                    @Html.Raw(productOptions.ToString())
+                                </div>
+
+                                <!-- Instructor Dropdown -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Instructor</label>
+                                    @{
+                                        var instructorOptions = new System.Text.StringBuilder();
+                                        instructorOptions.AppendLine("<select name=\"DataPanel.SelectedInstructorId\" class=\"form-select\">");
+                                        instructorOptions.AppendLine("<option value=\"\">-- Select Instructor --</option>");
+                                        foreach (var instructor in Model.DataPanel.Instructors)
+                                        {
+                                            var selected = instructor.Value == Model.DataPanel.SelectedInstructorId?.ToString() ? " selected" : "";
+                                            instructorOptions.AppendLine($"<option value=\"{instructor.Value}\"{selected}>{System.Net.WebUtility.HtmlEncode(instructor.Text)}</option>");
+                                        }
+                                        instructorOptions.AppendLine("</select>");
+                                    }
+                                    @Html.Raw(instructorOptions.ToString())
+                                </div>
+
+                                <!-- Description -->
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea name="DataPanel.Description" class="form-control" rows="4" placeholder="Enter description here...">@Model.DataPanel.Description</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Submit Buttons -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-success me-2">
+                                        <i class="bi bi-check-circle"></i> Save
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                        <i class="bi bi-arrow-clockwise"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div id="readOnlyView" style="display: @(Model.DataPanel.IsEditMode ? "none" : "block")">
+                        <!-- Read-Only View Mode -->
+                        <div class="row">
+                            @if (Model.DataPanel.BoardId.HasValue)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <strong>Board ID:</strong>
+                                    <p class="text-muted" id="displayBoardId">@Model.DataPanel.BoardId</p>
+                                </div>
+                            }
+
+                            <div class="col-md-6 mb-3">
+                                <strong>Course:</strong>
+                                <p class="text-muted" id="displayCourse">@(Model.DataPanel.CourseDisplayName ?? "Not selected")</p>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <strong>Version Title:</strong>
+                                <p class="text-muted" id="displayVersionTitle">@(Model.DataPanel.VersionTitle ?? "Not specified")</p>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <strong>Language:</strong>
+                                <p class="text-muted" id="displayLanguage">@(Model.DataPanel.LanguageDisplayName ?? "Not selected")</p>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <strong>Product:</strong>
+                                <p class="text-muted" id="displayProduct">@(Model.DataPanel.ProductDisplayName ?? "Not selected")</p>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <strong>Instructor:</strong>
+                                <p class="text-muted" id="displayInstructor">@(Model.DataPanel.InstructorDisplayName ?? "Not assigned")</p>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <strong>Description:</strong>
+                                <p class="text-muted" id="displayDescription">@(Model.DataPanel.Description ?? "No description provided")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://cdn.jsdelivr.net/npm/monday-sdk-js/dist/main.min.js"></script>
+    <script>
+        const monday = window.mondaySdk();
+        let isEditMode = @Model.DataPanel.IsEditMode.ToString().ToLower();
+        let isNewRecord = @Model.DataPanel.IsNewRecord.ToString().ToLower();
+
+        console.log("Page loaded and Monday SDK initialized");
+
+        monday.listen("context", res => {
+            console.log("Context received:", res);
+            // const boardId = res.data.boardId;
+            const boardId = "1234567";
+            document.getElementById("boardIdLabel").textContent = "Board ID: " + boardId;
+        });
+
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            
+            const editForm = document.getElementById('editModeForm');
+            const readOnlyView = document.getElementById('readOnlyView');
+            const editButton = document.getElementById('editButtonText');
+            
+            if (isEditMode) {
+                editForm.style.display = 'block';
+                readOnlyView.style.display = 'none';
+                editButton.textContent = 'Cancel';
+            } else {
+                editForm.style.display = 'none';
+                readOnlyView.style.display = 'block';
+                editButton.textContent = 'Edit';
+            }
+        }
+
+        async function saveData(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(document.getElementById('dataForm'));
+            
+            try {
+                const response = await fetch('/BoardMeta?handler=Save', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.text();
+                    
+                    // Update the read-only view with new data
+                    updateReadOnlyView(formData);
+                    
+                    // Exit edit mode
+                    isEditMode = false;
+                    toggleEditMode();
+                    
+                    showSuccessMessage('Data saved successfully!');
+                } else {
+                    throw new Error('Failed to save data');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showErrorMessage('Error saving data. Please try again.');
+            }
+        }
+
+        function updateReadOnlyView(formData) {
+            // Update the display values in read-only view
+            const boardId = formData.get('DataPanel.BoardId');
+            const courseId = formData.get('DataPanel.SelectedCourseId');
+            const versionTitle = formData.get('DataPanel.VersionTitle');
+            const languageId = formData.get('DataPanel.SelectedLanguageId');
+            const productId = formData.get('DataPanel.SelectedProductId');
+            const instructorId = formData.get('DataPanel.SelectedInstructorId');
+            const description = formData.get('DataPanel.Description');
+
+            if (boardId) document.getElementById('displayBoardId').textContent = boardId;
+            if (versionTitle) document.getElementById('displayVersionTitle').textContent = versionTitle || 'Not specified';
+            if (description) document.getElementById('displayDescription').textContent = description || 'No description provided';
+            
+            // Update dropdown displays with selected text
+            const courseSelect = document.querySelector('select[name="DataPanel.SelectedCourseId"]');
+            const courseText = courseSelect.options[courseSelect.selectedIndex]?.text || 'Not selected';
+            document.getElementById('displayCourse').textContent = courseText;
+            
+            const languageSelect = document.querySelector('select[name="DataPanel.SelectedLanguageId"]');
+            const languageText = languageSelect.options[languageSelect.selectedIndex]?.text || 'Not selected';
+            document.getElementById('displayLanguage').textContent = languageText;
+            
+            const productSelect = document.querySelector('select[name="DataPanel.SelectedProductId"]');
+            const productText = productSelect.options[productSelect.selectedIndex]?.text || 'Not selected';
+            document.getElementById('displayProduct').textContent = productText;
+            
+            const instructorSelect = document.querySelector('select[name="DataPanel.SelectedInstructorId"]');
+            const instructorText = instructorSelect.options[instructorSelect.selectedIndex]?.text || 'Not assigned';
+            document.getElementById('displayInstructor').textContent = instructorText;
+        }
+
+        function resetForm() {
+            document.getElementById('dataForm').reset();
+        }
+
+        function showSuccessMessage(message) {
+            document.getElementById('successText').textContent = message;
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 5000);
+        }
+
+        function showErrorMessage(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('errorMessage').style.display = 'none';
+            }, 5000);
+        }
+
+        function hideMessage(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+    </script>
 }

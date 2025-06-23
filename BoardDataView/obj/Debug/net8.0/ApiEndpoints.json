@@ -1,1 +1,110 @@
-[]
+[
+  {
+    "ContainingType": "BoardDataView.Controllers.APIController",
+    "Method": "GetBoardId",
+    "RelativePath": "api/API/boardid",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BoardDataView.Controllers.APIController",
+    "Method": "SaveCourseInstance",
+    "RelativePath": "api/API/courseinstance",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "BoardDataView.Models.CourseInstanceApiViewModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BoardDataView.Controllers.APIController",
+    "Method": "GetCourseInstance",
+    "RelativePath": "api/API/courseinstance/{boardId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "boardId",
+        "Type": "System.Int64",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BoardDataView.Controllers.APIController",
+    "Method": "DeleteCourseInstance",
+    "RelativePath": "api/API/courseinstance/{boardId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "boardId",
+        "Type": "System.Int64",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BoardDataView.Controllers.APIController",
+    "Method": "GetCourses",
+    "RelativePath": "api/API/courses",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BoardDataView.Controllers.APIController",
+    "Method": "GetLanguages",
+    "RelativePath": "api/API/languages",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BoardDataView.Controllers.APIController",
+    "Method": "GetProducts",
+    "RelativePath": "api/API/products",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BoardDataView.Controllers.APIController",
+    "Method": "GetUsers",
+    "RelativePath": "api/API/users",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BoardDataView.Controllers.BoardMetaController",
+    "Method": "GetUsers",
+    "RelativePath": "api/BoardMeta/users",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]

@@ -1,0 +1,48 @@
+﻿@page
+@model BoardDataView.Pages.SafeViewModel
+@{
+    Layout = null;
+    var publicIp = Model.PublicIpAddress ?? "Unknown";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Debug Area - SafeView</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            font-family: Consolas, monospace, Arial, sans-serif;
+        }
+        .debug-area {
+            margin: 40px auto;
+            max-width: 600px;
+            background: #111;
+            border-radius: 8px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.7);
+        }
+        .debug-label {
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            color: #aaa;
+        }
+        .debug-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #fff;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-area">
+        <div class="debug-label">Public IP Address:</div>
+        <div class="debug-value">@publicIp</div>
+        <div class="debug-label">Debugging Information:</div>
+    </div>
+</body>
+</html>
