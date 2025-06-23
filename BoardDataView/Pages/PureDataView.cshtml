@@ -1,0 +1,353 @@
+@page
+@model BoardDataView.Pages.PureDataViewModel
+@{
+    Layout = null; // No layout for iframe embedding
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Course Instance Data</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Monday SDK -->
+    <script src="https://cdn.monday.com/sdk/2.0/monday-sdk.js"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">Course Instance Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Loading indicator -->
+                        <div id="loadingIndicator" class="text-center mb-3">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Loading course data...</p>
+                        </div>
+
+                        <!-- Error message -->
+                        <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+
+                        <!-- Success message -->
+                        <div id="successMessage" class="alert alert-success" style="display: none;"></div>
+
+                        <!-- Course Instance Form -->
+                        <form id="courseInstanceForm" style="display: none;">
+                            <div class="mb-3">
+                                <label for="boardId" class="form-label">Board ID</label>
+                                <input type="text" class="form-control" id="boardId" readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="courseId" class="form-label">Course</label>
+                                <select class="form-select" id="courseId" required>
+                                    <option value="">Select a course...</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="instructorId" class="form-label">Instructor</label>
+                                <select class="form-select" id="instructorId" required>
+                                    <option value="">Select an instructor...</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="languageId" class="form-label">Language</label>
+                                <select class="form-select" id="languageId" required>
+                                    <option value="">Select a language...</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="productId" class="form-label">Product</label>
+                                <select class="form-select" id="productId" required>
+                                    <option value="">Select a product...</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="endDate" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="endDate" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea class="form-control" id="notes" rows="3"></textarea>
+                            </div>
+
+                            <!-- Action buttons -->
+                            <div class="d-flex gap-2">
+                                <!-- Edit mode buttons (shown when data exists and not editing) -->
+                                <button type="button" id="editBtn" class="btn btn-primary" style="display: none;">Edit</button>
+                                <button type="button" id="refreshBtn" class="btn btn-secondary" style="display: none;">Refresh</button>
+                                
+                                <!-- Save/Cancel buttons (shown when editing or creating new) -->
+                                <button type="submit" id="saveBtn" class="btn btn-success">Save</button>
+                                <button type="button" id="cancelBtn" class="btn btn-secondary" style="display: none;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let originalData = null;
+        let isEditMode = false;
+        let currentBoardId = null;
+
+        // Initialize Monday SDK and start loading process
+        $(document).ready(function() {
+            console.log('Document ready, initializing...');
+            
+            // Initialize Monday SDK first
+            if (typeof mondaySdk !== 'undefined') {
+                const monday = mondaySdk();
+                monday.init({
+                    apiToken: 'your-api-token', // This will be overridden by Monday.com
+                });
+                
+                // Try to get board ID from Monday context
+                monday.execute('context').then(res => {
+                    console.log('Monday context:', res);
+                    if (res.data && res.data.boardId) {
+                        currentBoardId = res.data.boardId.toString();
+                        console.log('Got board ID from Monday:', currentBoardId);
+                        initializePage();
+                    } else {
+                        console.log('No board ID from Monday, trying development API...');
+                        getBoardIdFromDevelopmentApi();
+                    }
+                }).catch(error => {
+                    console.error('Error getting Monday context:', error);
+                    getBoardIdFromDevelopmentApi();
+                });
+            } else {
+                console.log('Monday SDK not available, using development API...');
+                getBoardIdFromDevelopmentApi();
+            }
+        });
+
+        function getBoardIdFromDevelopmentApi() {
+            $.get('/api/API/boardid')
+                .done(function(response) {
+                    currentBoardId = response.boardId;
+                    console.log('Got board ID from development API:', currentBoardId);
+                    initializePage();
+                })
+                .fail(function(xhr, status, error) {
+                    console.error('Error getting board ID from development API:', error);
+                    // Fallback to hardcoded board ID
+                    currentBoardId = '1234567890';
+                    console.log('Using fallback board ID:', currentBoardId);
+                    initializePage();
+                });
+        }
+
+        function initializePage() {
+            console.log('Initializing page with board ID:', currentBoardId);
+            $('#boardId').val(currentBoardId);
+            
+            // Load all dropdown data and course instance in parallel
+            Promise.all([
+                loadDropdownData(),
+                loadCourseInstance()
+            ]).then(() => {
+                console.log('All data loaded successfully');
+                $('#loadingIndicator').hide();
+                $('#courseInstanceForm').show();
+            }).catch(error => {
+                console.error('Error loading data:', error);
+                showError('Failed to load page data: ' + error.message);
+                $('#loadingIndicator').hide();
+            });
+        }
+
+        function loadDropdownData() {
+            console.log('Loading dropdown data...');
+            
+            const promises = [
+                $.get('/api/API/users'),
+                $.get('/api/API/courses'),
+                $.get('/api/API/languages'),
+                $.get('/api/API/products')
+            ];
+
+            return Promise.all(promises).then(([users, courses, languages, products]) => {
+                console.log('Dropdown data loaded:', { users: users.length, courses: courses.length, languages: languages.length, products: products.length });
+                
+                // Populate dropdowns
+                populateDropdown('#instructorId', users, 'id', 'name');
+                populateDropdown('#courseId', courses, 'id', 'name');
+                populateDropdown('#languageId', languages, 'id', 'name');
+                populateDropdown('#productId', products, 'id', 'name');
+            });
+        }
+
+        function populateDropdown(selector, data, valueField, textField) {
+            const $dropdown = $(selector);
+            const defaultOption = $dropdown.find('option[value=""]').first();
+            
+            $dropdown.empty();
+            if (defaultOption.length > 0) {
+                $dropdown.append(defaultOption);
+            }
+            
+            $.each(data, function(index, item) {
+                $dropdown.append($('<option></option>')
+                    .attr('value', item[valueField])
+                    .text(item[textField]));
+            });
+        }
+
+        function loadCourseInstance() {
+            console.log('Loading course instance for board ID:', currentBoardId);
+            
+            return $.get(`/api/API/courseinstance/${currentBoardId}`)
+                .then(function(data) {
+                    console.log('Course instance loaded:', data);
+                    if (data && data.id) {
+                        // Data exists - populate form and set to read-only mode
+                        populateForm(data);
+                        setReadOnlyMode();
+                        originalData = { ...data };
+                    } else {
+                        // No data exists - set to edit mode for new entry
+                        setEditMode(true);
+                    }
+                })
+                .catch(function(xhr) {
+                    if (xhr.status === 404) {
+                        console.log('No existing course instance found');
+                        setEditMode(true);
+                    } else {
+                        throw new Error(`HTTP ${xhr.status}: ${xhr.responseText}`);
+                    }
+                });
+        }
+
+        function populateForm(data) {
+            $('#courseId').val(data.courseId || '');
+            $('#instructorId').val(data.instructorId || '');
+            $('#languageId').val(data.languageId || '');
+            $('#productId').val(data.productId || '');
+            $('#startDate').val(data.startDate ? data.startDate.split('T')[0] : '');
+            $('#endDate').val(data.endDate ? data.endDate.split('T')[0] : '');
+            $('#notes').val(data.notes || '');
+        }
+
+        function setReadOnlyMode() {
+            isEditMode = false;
+            $('#courseInstanceForm input, #courseInstanceForm select, #courseInstanceForm textarea').prop('disabled', true);
+            $('#boardId').prop('disabled', true); // Board ID should always be disabled
+            
+            // Show edit/refresh buttons, hide save/cancel
+            $('#editBtn').show();
+            $('#refreshBtn').show();
+            $('#saveBtn').hide();
+            $('#cancelBtn').hide();
+        }
+
+        function setEditMode(isNew = false) {
+            isEditMode = true;
+            $('#courseInstanceForm input, #courseInstanceForm select, #courseInstanceForm textarea').prop('disabled', false);
+            $('#boardId').prop('disabled', true); // Board ID should always be disabled
+            
+            // Show save/cancel buttons, hide edit/refresh
+            $('#editBtn').hide();
+            $('#refreshBtn').hide();
+            $('#saveBtn').show();
+            $('#cancelBtn').show();
+            
+            if (!isNew) {
+                $('#cancelBtn').show();
+            }
+        }
+
+        // Event handlers
+        $('#editBtn').click(function() {
+            setEditMode();
+        });
+
+        $('#cancelBtn').click(function() {
+            if (originalData) {
+                populateForm(originalData);
+                setReadOnlyMode();
+            }
+        });
+
+        $('#refreshBtn').click(function() {
+            location.reload();
+        });
+
+        $('#courseInstanceForm').submit(function(e) {
+            e.preventDefault();
+            
+            if (!isEditMode) return;
+            
+            const formData = {
+                boardId: currentBoardId,
+                courseId: parseInt($('#courseId').val()) || null,
+                instructorId: parseInt($('#instructorId').val()) || null,
+                languageId: parseInt($('#languageId').val()) || null,
+                productId: parseInt($('#productId').val()) || null,
+                startDate: $('#startDate').val() || null,
+                endDate: $('#endDate').val() || null,
+                notes: $('#notes').val() || null
+            };
+
+            console.log('Saving course instance:', formData);
+
+            $.ajax({
+                url: '/api/API/courseinstance',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.log('Save successful:', response);
+                    showSuccess('Course instance saved successfully!');
+                    originalData = { ...formData, id: response.id };
+                    setReadOnlyMode();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Save error:', xhr.responseText);
+                    showError('Failed to save: ' + (xhr.responseJSON?.message || error));
+                }
+            });
+        });
+
+        function showError(message) {
+            $('#errorMessage').text(message).show();
+            $('#successMessage').hide();
+            setTimeout(() => $('#errorMessage').fadeOut(), 5000);
+        }
+
+        function showSuccess(message) {
+            $('#successMessage').text(message).show();
+            $('#errorMessage').hide();
+            setTimeout(() => $('#successMessage').fadeOut(), 3000);
+        }
+    </script>
+</body>
+</html> 

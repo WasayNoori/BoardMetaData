@@ -13,5 +13,8 @@ namespace BoardDataView.Models
         public int? ProductId { get; set; }
         public string? ProductName { get; set; }
         public string? Description { get; set; }
+        public int? Lessons { get; set; }
+        public string? FileLocation { get; set; }
+        public bool RevisionFlip { get; set; }
     }
 } 

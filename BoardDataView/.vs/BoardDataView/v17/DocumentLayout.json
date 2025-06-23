@@ -1,0 +1,75 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\wasay\\source\\repos\\WasayNoori\\BoardMetaData\\BoardDataView\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{54DEF4D1-5D1C-EF52-711B-EA953EBDEB7F}|BoardDataView.csproj|c:\\users\\wasay\\source\\repos\\wasaynoori\\boardmetadata\\boarddataview\\controllers\\apicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{54DEF4D1-5D1C-EF52-711B-EA953EBDEB7F}|BoardDataView.csproj|solutionrelative:controllers\\apicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{54DEF4D1-5D1C-EF52-711B-EA953EBDEB7F}|BoardDataView.csproj|c:\\users\\wasay\\source\\repos\\wasaynoori\\boardmetadata\\boarddataview\\pages\\courseinforview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{54DEF4D1-5D1C-EF52-711B-EA953EBDEB7F}|BoardDataView.csproj|solutionrelative:pages\\courseinforview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{54DEF4D1-5D1C-EF52-711B-EA953EBDEB7F}|BoardDataView.csproj|c:\\users\\wasay\\source\\repos\\wasaynoori\\boardmetadata\\boarddataview\\models\\courseinstance.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{54DEF4D1-5D1C-EF52-711B-EA953EBDEB7F}|BoardDataView.csproj|solutionrelative:models\\courseinstance.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CourseInforView.cshtml",
+              "DocumentMoniker": "C:\\Users\\wasay\\source\\repos\\WasayNoori\\BoardMetaData\\BoardDataView\\Pages\\CourseInforView.cshtml",
+              "RelativeDocumentMoniker": "Pages\\CourseInforView.cshtml",
+              "ToolTip": "C:\\Users\\wasay\\source\\repos\\WasayNoori\\BoardMetaData\\BoardDataView\\Pages\\CourseInforView.cshtml",
+              "RelativeToolTip": "Pages\\CourseInforView.cshtml",
+              "ViewState": "AgIAALoBAAAAAAAAAAAgwBoBAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-23T06:32:43.48Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "APIController.cs",
+              "DocumentMoniker": "C:\\Users\\wasay\\source\\repos\\WasayNoori\\BoardMetaData\\BoardDataView\\Controllers\\APIController.cs",
+              "RelativeDocumentMoniker": "Controllers\\APIController.cs",
+              "ToolTip": "C:\\Users\\wasay\\source\\repos\\WasayNoori\\BoardMetaData\\BoardDataView\\Controllers\\APIController.cs",
+              "RelativeToolTip": "Controllers\\APIController.cs",
+              "ViewState": "AgIAAEoAAAAAAAAAAAAEwE4AAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-23T06:28:27.618Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CourseInstance.cs",
+              "DocumentMoniker": "C:\\Users\\wasay\\source\\repos\\WasayNoori\\BoardMetaData\\BoardDataView\\Models\\CourseInstance.cs",
+              "RelativeDocumentMoniker": "Models\\CourseInstance.cs",
+              "ToolTip": "C:\\Users\\wasay\\source\\repos\\WasayNoori\\BoardMetaData\\BoardDataView\\Models\\CourseInstance.cs",
+              "RelativeToolTip": "Models\\CourseInstance.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAAAAABsAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-23T05:51:14.201Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -94,7 +94,10 @@ namespace BoardDataView.Controllers
                         InstructorName = ci.Instructor != null ? ci.Instructor.FullName : null,
                         ProductId = ci.ProductId,
                         ProductName = ci.Product != null ? ci.Product.ProductName : null,
-                        Description = ci.Description
+                        Description = ci.Description,
+                        Lessons = ci.Lessons,
+                        FileLocation = ci.FileLocation,
+                        RevisionFlip = ci.RevisionFlip ?? false
                     })
                     .FirstOrDefaultAsync();
 
@@ -185,6 +188,9 @@ namespace BoardDataView.Controllers
                     existingCourseInstance.InstructorId = model.InstructorId;
                     existingCourseInstance.ProductId = model.ProductId;
                     existingCourseInstance.Description = model.Description;
+                    existingCourseInstance.Lessons = model.Lessons;
+                    existingCourseInstance.FileLocation = model.FileLocation;
+                    existingCourseInstance.RevisionFlip = model.RevisionFlip;
 
                     await _context.SaveChangesAsync();
                     return Ok(new { success = true, message = "Course instance updated successfully!", isNew = false });
@@ -201,6 +207,9 @@ namespace BoardDataView.Controllers
                         InstructorId = model.InstructorId,
                         ProductId = model.ProductId,
                         Description = model.Description,
+                        Lessons = model.Lessons,
+                        FileLocation = model.FileLocation,
+                        RevisionFlip = model.RevisionFlip,
                         CreatedAt = DateTime.Now
                     };
 

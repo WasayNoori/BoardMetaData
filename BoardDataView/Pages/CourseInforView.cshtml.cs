@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BoardDataView.Pages
 {
-    public class PureDataViewModel : PageModel
+    public class CourseInforViewModel : PageModel
     {
         public void OnGet()
         {

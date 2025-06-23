@@ -24,6 +24,15 @@ namespace BoardDataView.Models
         
         public string? Description { get; set; }
         
+        [Column("Lessons")]
+        public int? Lessons { get; set; }
+        
+        [Column("FileLocation")]
+        public string? FileLocation { get; set; }
+        
+        [Column("RevisionFlip")]
+        public bool? RevisionFlip { get; set; }
+        
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         

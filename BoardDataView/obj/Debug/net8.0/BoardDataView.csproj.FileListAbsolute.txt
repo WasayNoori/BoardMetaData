@@ -132,10 +132,10 @@ C:\Users\wasay\source\repos\WasayNoori\BoardMetaData\BoardDataView\obj\Debug\net
 C:\Users\wasay\source\repos\WasayNoori\BoardMetaData\BoardDataView\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.BoardDataView.props
 C:\Users\wasay\source\repos\WasayNoori\BoardMetaData\BoardDataView\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.BoardDataView.props
 C:\Users\wasay\source\repos\WasayNoori\BoardMetaData\BoardDataView\obj\Debug\net8.0\staticwebassets.pack.json
-C:\Users\wasay\source\repos\WasayNoori\BoardMetaData\BoardDataView\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\wasay\source\repos\WasayNoori\BoardMetaData\BoardDataView\obj\Debug\net8.0\BoardDat.6B6FCE3C.Up2Date
 C:\Users\wasay\source\repos\WasayNoori\BoardMetaData\BoardDataView\obj\Debug\net8.0\BoardDataView.dll
 C:\Users\wasay\source\repos\WasayNoori\BoardMetaData\BoardDataView\obj\Debug\net8.0\refint\BoardDataView.dll
 C:\Users\wasay\source\repos\WasayNoori\BoardMetaData\BoardDataView\obj\Debug\net8.0\BoardDataView.pdb
 C:\Users\wasay\source\repos\WasayNoori\BoardMetaData\BoardDataView\obj\Debug\net8.0\BoardDataView.genruntimeconfig.cache
 C:\Users\wasay\source\repos\WasayNoori\BoardMetaData\BoardDataView\obj\Debug\net8.0\ref\BoardDataView.dll
+C:\Users\wasay\source\repos\WasayNoori\BoardMetaData\BoardDataView\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

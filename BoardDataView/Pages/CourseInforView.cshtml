@@ -106,6 +106,28 @@
                     </div>
                     
                     <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="lessons" class="form-label">Lessons:</label>
+                            <input type="number" id="lessons" class="form-control" min="0" placeholder="Number of lessons">
+                        </div>
+                        <div class="col-md-9 mb-3">
+                            <label for="fileLocation" class="form-label">File Location:</label>
+                            <input type="text" id="fileLocation" class="form-control" placeholder="Enter file location or path...">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="revisionFlip">
+                                <label class="form-check-label" for="revisionFlip">
+                                    Revision Flip
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
                         <div class="col-12">
                             <!-- Edit Mode Buttons (shown when editing) -->
                             <div id="editModeButtons" style="display: none;">
@@ -156,12 +178,10 @@
             console.log("Setting initial button state...");
             $('#readOnlyButtons').show(); // Show read-only buttons initially
             
-            // Board ID and course instance data will be loaded by:
-            // 1. Monday SDK context (production) - handled by Monday listener below
-            // 2. Development settings API (development) - handled by timeout below
-            // The initializeApp function will call loadCourseInstance() once board ID is available
-            
-            console.log("Waiting for Monday SDK or timeout...");
+            // For development, try to load board ID from settings immediately
+            // For production, Monday SDK will override this
+            console.log("Attempting to load board ID from development settings...");
+            loadBoardIdFromSettings();
             
             // Set up event handlers
             $('#loadCourseInstanceBtn').click(function() {
@@ -209,33 +229,57 @@
             
             console.log("App initialized with Board ID:", currentBoardId);
             
-            // Load the course instance data for this board
-            console.log("About to call loadCourseInstance...");
-            loadCourseInstance(currentBoardId);
+            // WAIT for dropdown data to finish loading before loading course instance
+            console.log("Waiting for dropdown data to complete before loading course instance...");
+            
+            // Check if dropdown loading is still in progress
+            loadAllDropdownData().then(function() {
+                console.log("Dropdown data is ready, now loading course instance...");
+                loadCourseInstance(currentBoardId);
+            }).catch(function(error) {
+                console.error("Error ensuring dropdown data:", error);
+                // Still try to load course instance even if dropdowns failed
+                loadCourseInstance(currentBoardId);
+            });
         }
 
         // Load Board ID from appsettings via API (development mode only)
         function loadBoardIdFromSettings() {
+            console.log("Calling development board ID API...");
             $.ajax({
                 url: '/api/API/boardid',
                 type: 'GET',
                 success: function(response) {
-                    console.log("Board ID loaded from development API:", response.boardId);
-                    initializeApp(response.boardId);
+                    console.log("Board ID loaded from development API:", response);
+                    if (response && response.boardId) {
+                        console.log("Successfully got board ID:", response.boardId);
+                        initializeApp(response.boardId);
+                    } else {
+                        console.error("Invalid response from board ID API:", response);
+                        showMessage('Invalid response from development API', 'error');
+                    }
                 },
                 error: function(xhr, status, error) {
-                    console.error("Board ID API error:", error);
+                    console.error("Board ID API error details:", {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText,
+                        error: error
+                    });
                     
                     if (xhr.status === 400) {
                         // Production environment - Board ID should come from Monday
                         console.log("Production environment detected - waiting for Monday.com board ID");
                         $('#dataStatus').html('<span class="text-warning">⏳ Waiting for Monday.com board ID...</span>');
                         showMessage('This app must be embedded in Monday.com to work in production', 'warning');
+                    } else if (xhr.status === 404) {
+                        console.log("Board ID API endpoint not found");
+                        showMessage('Board ID API endpoint not found', 'error');
                     } else {
-                        // Development environment but API failed
-                        console.log("Development API failed - using hardcoded fallback");
+                        // Development environment but API failed - use fallback
+                        console.log("Development API failed - using hardcoded fallback from appsettings");
                         initializeApp("1234567"); // Match appsettings.Development.json value
-                        showMessage('Development API failed - using fallback Board ID', 'error');
+                        showMessage('Development API failed - using fallback Board ID: 1234567', 'info');
                     }
                 }
             });
@@ -243,6 +287,7 @@
 
         // Load all dropdown data in parallel
         function loadAllDropdownData() {
+            console.log('Starting to load all dropdown data...');
             showMessage('Loading dropdown data...', 'info');
             
             // Return the promise so we can chain operations
@@ -251,11 +296,13 @@
                 loadLanguages(), 
                 loadProducts(),
                 loadInstructors()
-            ]).then(function() {
+            ]).then(function(results) {
+                console.log('All dropdown data loaded successfully!', results);
                 showMessage('All dropdown data loaded successfully!', 'success');
+                return results;
             }).catch(function(error) {
                 console.error('Error loading dropdown data:', error);
-                showMessage('Error loading some dropdown data', 'error');
+                showMessage('Error loading some dropdown data: ' + error.message, 'error');
                 throw error; // Re-throw so calling code knows it failed
             });
         }
@@ -382,12 +429,27 @@
 
         // Populate form fields with course instance data
         function populateFormWithData(data) {
-            $('#courseDropdown').val(data.courseId || '');
-            $('#versionTitle').val(data.versionTitle || '');
-            $('#languageDropdown').val(data.languageId || '');
-            $('#productDropdown').val(data.productId || '');
-            $('#instructorDropdown').val(data.instructorId || '');
-            $('#description').val(data.description || '');
+            console.log("Populating form with data:", data);
+            
+            // Small delay to ensure dropdowns are fully rendered
+            setTimeout(function() {
+                $('#courseDropdown').val(data.courseId || '');
+                $('#versionTitle').val(data.versionTitle || '');
+                $('#languageDropdown').val(data.languageId || '');
+                $('#productDropdown').val(data.productId || '');
+                $('#instructorDropdown').val(data.instructorId || '');
+                $('#description').val(data.description || '');
+                $('#lessons').val(data.lessons || '');
+                $('#fileLocation').val(data.fileLocation || '');
+                $('#revisionFlip').prop('checked', data.revisionFlip || false);
+                
+                console.log("Form populated with values:", {
+                    courseId: $('#courseDropdown').val(),
+                    languageId: $('#languageDropdown').val(),
+                    productId: $('#productDropdown').val(),
+                    instructorId: $('#instructorDropdown').val()
+                });
+            }, 100); // 100ms delay to ensure DOM is ready
         }
 
         // Clear all form fields
@@ -398,6 +460,9 @@
             $('#productDropdown').val('');
             $('#instructorDropdown').val('');
             $('#description').val('');
+            $('#lessons').val('');
+            $('#fileLocation').val('');
+            $('#revisionFlip').prop('checked', false);
             $('#dataStatus').text('Form cleared');
         }
 
@@ -422,7 +487,10 @@
                 languageId: parseInt($('#languageDropdown').val()) || null,
                 productId: parseInt($('#productDropdown').val()) || null,
                 instructorId: parseInt($('#instructorDropdown').val()) || null,
-                description: $('#description').val() || null
+                description: $('#description').val() || null,
+                lessons: parseInt($('#lessons').val()) || null,
+                fileLocation: $('#fileLocation').val() || null,
+                revisionFlip: $('#revisionFlip').is(':checked')
             };
 
             console.log("Saving course instance data:", courseInstanceData);
@@ -467,6 +535,9 @@
             $('#productDropdown').prop('disabled', false);
             $('#instructorDropdown').prop('disabled', false);
             $('#description').prop('disabled', false);
+            $('#lessons').prop('disabled', false);
+            $('#fileLocation').prop('disabled', false);
+            $('#revisionFlip').prop('disabled', false);
             
             // Show edit mode buttons, hide read-only buttons
             $('#editModeButtons').show();
@@ -486,6 +557,9 @@
             $('#productDropdown').prop('disabled', true);
             $('#instructorDropdown').prop('disabled', true);
             $('#description').prop('disabled', true);
+            $('#lessons').prop('disabled', true);
+            $('#fileLocation').prop('disabled', true);
+            $('#revisionFlip').prop('disabled', true);
             
             // Show read-only buttons, hide edit mode buttons
             $('#editModeButtons').hide();
@@ -535,32 +609,20 @@
 
         console.log("Monday SDK initialized within main script");
 
-        // Listen for Monday context (production)
+        // Listen for Monday context (production) - this will override development settings
         monday.listen("context", res => {
             console.log("Monday context received:", res);
             if (res.data && res.data.boardId) {
                 mondayBoardId = res.data.boardId.toString();
                 isMondayContext = true;
-                console.log("Board ID from Monday:", mondayBoardId);
+                console.log("Board ID from Monday (overriding development):", mondayBoardId);
                 
-                // Initialize the app with Monday board ID
+                // Initialize the app with Monday board ID (this overrides development settings)
                 initializeApp(mondayBoardId);
             } else {
                 console.log("Monday context received but no boardId found:", res);
             }
         });
-
-        // Timeout to handle cases where Monday context doesn't load (development)
-        console.log("Setting up 5-second timeout for Monday context...");
-        setTimeout(() => {
-            console.log("Timeout fired. isMondayContext =", isMondayContext);
-            if (!isMondayContext) {
-                console.log("Monday context not available after timeout - checking if development mode");
-                loadBoardIdFromSettings();
-            } else {
-                console.log("Monday context was already received, skipping fallback");
-            }
-        }, 5000); // Wait 5 seconds for Monday context (longer for production)
 
     </script>
 

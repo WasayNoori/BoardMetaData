@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BoardDataView")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8c72197b9024ea415f32433989799e456f211b82")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1b6d62e7a665f341bedfa8f43dcdcece6014d902")]
 [assembly: System.Reflection.AssemblyProductAttribute("BoardDataView")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BoardDataView")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
