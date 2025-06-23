@@ -66,5 +66,5 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "Database connection failed. Please check your connection string and ensure the database is accessible.");
     }
 }
-
+app.MapGet("/", () => Results.Redirect("/courseinforview"));
 app.Run();

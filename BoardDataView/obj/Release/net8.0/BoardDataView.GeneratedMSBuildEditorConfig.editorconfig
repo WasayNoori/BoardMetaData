@@ -24,6 +24,10 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQm9hcmRNZXRhLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/wasay/source/repos/WasayNoori/BoardMetaData/BoardDataView/Pages/CourseInforView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291cnNlSW5mb3JWaWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/wasay/source/repos/WasayNoori/BoardMetaData/BoardDataView/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -34,10 +38,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/wasay/source/repos/WasayNoori/BoardMetaData/BoardDataView/Pages/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpdmFjeS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/wasay/source/repos/WasayNoori/BoardMetaData/BoardDataView/Pages/PureDataView.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHVyZURhdGFWaWV3LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/wasay/source/repos/WasayNoori/BoardMetaData/BoardDataView/Pages/SafeView.cshtml]
